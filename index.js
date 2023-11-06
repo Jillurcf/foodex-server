@@ -48,6 +48,16 @@ async function run() {
       console.log(result);
     })
 
+    // Pagination related api
+    app.get('/api/v1/productsCount', async(req, res)=>{
+      const count = await allFoodCollection.estimatedDocumentCount();
+      res.send({count});
+    })
+    app.get('/allFoodCount', async(req, res)=>{
+      const count = await allFoodCollection.estimatedDocumentCount();
+      res.send(count); 
+      console.log(count);
+    })
     // user related api
 
     app.post('/api/v1/user', async(req, res)=>{
