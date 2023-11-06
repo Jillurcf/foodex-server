@@ -10,7 +10,7 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      "http://localhost:5173"
      
     ],
     credentials: true,
@@ -92,7 +92,7 @@ async function run() {
 
      // auth related api
 
-     app.post('/jwt', async(req, res) =>{
+     app.post('/api/v1/jwt', async(req, res) =>{
       const user = req.body;
       console.log('user for token', user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'});
@@ -104,6 +104,18 @@ async function run() {
         
     })
       .send({success: true})
+    })
+
+
+    
+    app.post('/api/v1/loggedOut', async(req, res)=>{
+      const user = req.body;
+      console.log('logged out', user);
+      res.clearCookie('token', {maxAge: 0, 
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      }).send({success: true})
+
     })
 
     // Send a ping to confirm a successful connection
