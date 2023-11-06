@@ -41,11 +41,16 @@ async function run() {
     const allFoodCollection = client.db("allFoodDB").collection("allFood");
     const userCollection = client.db("userDB").collection("user");
     
-
+    // AllFood Related Api
+    app.get('/api/v1/allFood', async(req, res)=>{
+      const result = await allFoodCollection.find().toArray();
+      res.send(result);
+      console.log(result);
+    })
 
     // user related api
 
-    app.post('/user', async(req, res)=>{
+    app.post('/api/v1/user', async(req, res)=>{
       const user = req.body;
       const result = await userCollection.insertOne(user);
       res.send(result)
