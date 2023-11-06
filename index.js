@@ -43,20 +43,26 @@ async function run() {
     
     // AllFood Related Api
     app.get('/api/v1/allFood', async(req, res)=>{
-      const result = await allFoodCollection.find().toArray();
-      res.send(result);
-      console.log(result);
+    
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size)
+      console.log('pagination', req.query);
+        const result = await allFoodCollection.find()
+        .skip(page * size)
+        .limit(size)
+        .toArray();
+        res.send(result);
     })
 
     // Pagination related api
-    app.get('/api/v1/productsCount', async(req, res)=>{
+    // app.get('/api/v1/productsCount', async(req, res)=>{
+    //   const count = await productCollection.estimatedDocumentCount();
+    //   res.send({count});
+    // })
+    app.get('/api/v1/allFoodCount', async(req, res)=>{
       const count = await allFoodCollection.estimatedDocumentCount();
-      res.send({count});
-    })
-    app.get('/allFoodCount', async(req, res)=>{
-      const count = await allFoodCollection.estimatedDocumentCount();
-      res.send(count); 
-      console.log(count);
+      res.send({count}); 
+      console.log({count});
     })
     // user related api
 
