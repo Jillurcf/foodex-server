@@ -66,7 +66,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/api/v1/allFood/:id", verifyToken, async (req, res) => {
+    app.get("/api/v1/allFood/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await allFoodCollection.findOne(query);
@@ -112,7 +112,7 @@ async function run() {
 
     // auth related api
 
-    app.post("/api/v1/jwt", verifyToken, async (req, res) => {
+    app.post("/api/v1/jwt", async (req, res) => {
       const user = req.body;
       console.log("user for token", user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
