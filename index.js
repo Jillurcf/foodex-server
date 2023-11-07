@@ -88,6 +88,30 @@ async function run() {
       res.send(result);
     });
 
+
+    // app.patch("/bookings/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) };
+    //   const updatedBooking = req.body;
+    //   console.log(updatedBooking);
+    //   const updatedDoc = {
+    //     $set: {
+    //       status: updatedBooking.status,
+    //     },
+    //   };
+    //   const result = await bookingCollection.updateOne(filter, updatedDoc);
+    //   res.send(result);
+    // });
+
+    app.delete("/api/v1/allFood/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await allFoodCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
+
     // Pagination related api
     app.get("/api/v1/allFoodCount", async (req, res) => {
       const count = await allFoodCollection.estimatedDocumentCount();
@@ -109,6 +133,18 @@ async function run() {
       const result = await purchaseCollection.insertOne(purchase);
       res.send(result);
     });
+
+    app.get("/api/v1/purchase/food/:email", async(req, res)=>{
+      const emailToFind = req.params.email;
+      const query = { email : emailToFind};
+      const result = await purchaseCollection.find(query).toArray();
+      res.send(result);
+      console.log(result);
+    })
+
+
+    
+
 
     // auth related api
 
