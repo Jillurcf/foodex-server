@@ -7,13 +7,6 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Enable CORS for all routes
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', 'https://assignment11-5c40c.web.app'); // Replace with the correct origin
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//   next();
-// });
 
 app.use(
   cors({
@@ -45,19 +38,19 @@ const client = new MongoClient(uri, {
 //   next();
 // };
 
-// const verifyToken = async (req, res, next) => {
-//   const token = req?.cookies?.token;
-//   if (!token) {
-//     return res.status(401).send({ message: "unauthorized access" });
-//   }
-//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, docoded) => {
-//     if (err) {
-//       return res.status(401).send({ message: "unauthorized access" });
-//     }
-//     req.user = docoded;
-//     next();
-//   });
-// };
+const verifyToken = async (req, res, next) => {
+  const token = req?.cookies?.token;
+  if (!token) {
+    return res.status(401).send({ message: "unauthorized access" });
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, docoded) => {
+    if (err) {
+      return res.status(401).send({ message: "unauthorized access" });
+    }
+    req.user = docoded;
+    next();
+  });
+};
 
 async function run() {
   try {
@@ -65,6 +58,7 @@ async function run() {
     // await client.connect();
     const allFoodCollection = client.db("allFoodDB").collection("allFood");
     const userCollection = client.db("userDB").collection("user");
+    const purchaseCollection = client.db("purchaseDB").collection("purchased");
 
     // AllFood Related Api
     app.get("/api/v1/allFood", async (req, res) => {
@@ -102,6 +96,23 @@ async function run() {
       res.send(result);
       console.log(result);
     });
+
+
+
+    // Puchase related api
+    // app.post('/api/v1/purchase', async(req, res)=>{
+    //   const buyer= req.body;
+    //   const result = await purchaseCollection.insertOne(buyer);
+    //   console.log(result);
+    //   res.send(result)
+    // })
+
+
+  app.post('/api/v1/purchase', async(req, res)=>{
+    const purchase = req.body;
+    const result = await purchaseCollection.insertOne(purchase);
+    res.send(result)
+  })
 
     // auth related api
 
