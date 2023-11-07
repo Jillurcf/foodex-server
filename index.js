@@ -7,7 +7,6 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-
 app.use(
   cors({
     origin: [
@@ -31,12 +30,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
-// middleware created by me
-// const logger = async (req, res, next) => {
-//   console.log("called", req.host, req.originalUrl);
-//   next();
-// };
 
 const verifyToken = async (req, res, next) => {
   const token = req?.cookies?.token;
@@ -73,12 +66,26 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/api/v1/allFood/:id", async (req, res) => {
+    app.get("/api/v1/allFood/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await allFoodCollection.findOne(query);
       res.send(result);
       console.log(result);
+    });
+
+    app.get("/api/v1/allFood/food/:email", async (req, res) => {
+      const emailToFind = req.params.email;
+      const query = { email : emailToFind};
+      const result = await allFoodCollection.find(query).toArray();
+      res.send(result);
+      console.log(result);
+    });
+
+    app.post("/api/v1/allFood", async (req, res) => {
+      const allFood = req.body;
+      const result = await allFoodCollection.insertOne(allFood);
+      res.send(result);
     });
 
     // Pagination related api
@@ -97,26 +104,15 @@ async function run() {
       console.log(result);
     });
 
-
-
-    // Puchase related api
-    // app.post('/api/v1/purchase', async(req, res)=>{
-    //   const buyer= req.body;
-    //   const result = await purchaseCollection.insertOne(buyer);
-    //   console.log(result);
-    //   res.send(result)
-    // })
-
-
-  app.post('/api/v1/purchase', async(req, res)=>{
-    const purchase = req.body;
-    const result = await purchaseCollection.insertOne(purchase);
-    res.send(result)
-  })
+    app.post("/api/v1/purchase", verifyToken, async (req, res) => {
+      const purchase = req.body;
+      const result = await purchaseCollection.insertOne(purchase);
+      res.send(result);
+    });
 
     // auth related api
 
-    app.post("/api/v1/jwt", async (req, res) => {
+    app.post("/api/v1/jwt", verifyToken, async (req, res) => {
       const user = req.body;
       console.log("user for token", user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
