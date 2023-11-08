@@ -60,6 +60,7 @@ async function run() {
       console.log("pagination", req.query);
       const result = await allFoodCollection
         .find()
+        .sort({count: -1})
         .skip(page * size)
         .limit(size)
         .toArray();
@@ -89,9 +90,9 @@ async function run() {
     });
 
 
-    app.put('/api/v1/allFood/update/:id', async(req, res)=>{
+    app.put('/api/v1/allFood/:id', async(req, res)=>{
       const id = req.params.id;
-      const filter = {_id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id)}
       const options = {upsert: true};
       const updatedFood = req.body;
       const food = {
@@ -102,6 +103,7 @@ async function run() {
             food_category: updatedFood.food_category,
             quantity: updatedFood.quantity,
             price: updatedFood.price,
+            count: updatedFood.count,
             userName: updatedFood.userName,
             email: updatedFood.email,
             origin: updatedFood.origin,
@@ -109,6 +111,24 @@ async function run() {
           }
       }
       const result = await allFoodCollection.updateOne(filter, food, options )
+      res.send(result)
+      console.log(result);
+  })
+
+
+    app.put('/api/v1/allFood/update/:id', async(req, res)=>{
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id)}
+      // const options = {upsert: true};
+      const updatedCount = req.body;
+      console.log(updatedCount);
+      const food = {
+          $set: {        
+            count: updatedCount.count,                    
+          }
+      }
+      const result = await allFoodCollection.updateOne(filter, food)
       res.send(result)
       console.log(result);
   })
