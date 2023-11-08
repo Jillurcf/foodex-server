@@ -89,7 +89,7 @@ async function run() {
     });
 
 
-    app.put('/api/v1/allFood/update:id', async(req, res)=>{
+    app.put('/api/v1/allFood/update/:id', async(req, res)=>{
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)}
       const options = {upsert: true};
@@ -105,9 +105,7 @@ async function run() {
             userName: updatedFood.userName,
             email: updatedFood.email,
             origin: updatedFood.origin,
-            description: updatedFood.description,
-
-               
+            description: updatedFood.description,               
           }
       }
       const result = await allFoodCollection.updateOne(filter, food, options )
@@ -154,7 +152,12 @@ async function run() {
       console.log(result);
     })
 
-
+    app.delete('/api/v1/purchase/delete/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await purchaseCollection.deleteOne(query);
+      res.send(result);
+    })
     
 
 
