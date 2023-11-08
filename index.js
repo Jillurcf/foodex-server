@@ -89,19 +89,31 @@ async function run() {
     });
 
 
-    // app.patch("/bookings/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: new ObjectId(id) };
-    //   const updatedBooking = req.body;
-    //   console.log(updatedBooking);
-    //   const updatedDoc = {
-    //     $set: {
-    //       status: updatedBooking.status,
-    //     },
-    //   };
-    //   const result = await bookingCollection.updateOne(filter, updatedDoc);
-    //   res.send(result);
-    // });
+    app.put('/api/v1/allFood/update:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = {upsert: true};
+      const updatedFood = req.body;
+      const food = {
+          $set: {
+
+            food_name: updatedFood.food_name,
+            food_image: updatedFood.food_image,
+            food_category: updatedFood.food_category,
+            quantity: updatedFood.quantity,
+            price: updatedFood.price,
+            userName: updatedFood.userName,
+            email: updatedFood.email,
+            origin: updatedFood.origin,
+            description: updatedFood.description,
+
+               
+          }
+      }
+      const result = await allFoodCollection.updateOne(filter, food, options )
+      res.send(result)
+      console.log(result);
+  })
 
     app.delete("/api/v1/allFood/:id", async (req, res) => {
       const id = req.params.id;
