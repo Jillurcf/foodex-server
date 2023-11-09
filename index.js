@@ -179,7 +179,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/api/v1/purchase/food/:email", async(req, res)=>{
+    app.get("/api/v1/purchase/food/:email", verifyToken, async(req, res)=>{
       const emailToFind = req.params.email;
       const query = { email : emailToFind};
       const result = await purchaseCollection.find(query).toArray();
@@ -187,7 +187,7 @@ async function run() {
       console.log(result);
     })
 
-    app.delete('/api/v1/purchase/delete/:id', async(req, res)=>{
+    app.delete('/api/v1/purchase/delete/:id', verifyToken, async(req, res)=>{
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await purchaseCollection.deleteOne(query);
