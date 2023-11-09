@@ -1,9 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-require("dotenv").config();
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -133,6 +134,20 @@ async function run() {
       console.log(result);
   })
 
+   app.put('/api/v1/allFood/quantity/:id', async(req, res)=>{
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id)}
+    const updateQuantity = req.body;
+    const foodQuantity = {
+      $set: {
+        quantity: updateQuantity.quantity,
+      }
+    }
+    const result = await allFoodCollection.updateOne(filter, foodQuantity);
+    res.send(result)
+    console.log(result);
+   })
+
     app.delete("/api/v1/allFood/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -211,7 +226,7 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
